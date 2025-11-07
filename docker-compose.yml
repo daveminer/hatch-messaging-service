@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15-alpine
@@ -12,12 +10,37 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U messaging_user -d messaging_service"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  phoenix:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: messaging-service-api
+    environment:
+      # Database configuration
+      DATABASE_URL: "ecto://messaging_user:messaging_password@postgres:5432/messaging_service"
+      # Phoenix configuration
+      PHX_SERVER: "true"
+      PHX_HOST: "localhost"
+      PORT: "4000"
+      MIX_ENV: "dev"
+      SECRET_KEY_BASE: "GBdg1e4hK/IyO6iE2GNMWcnbG3qW/zFASF3vVhBJhQSezomWtuEVTLJvYNCRW7ri"
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/app
+      - /app/deps
+      - /app/_build
+      - /app/assets/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -c "mix deps.get && mix assets.setup && mix ecto.create && mix ecto.migrate && mix phx.server"
+
 volumes:
-  postgres_data: 
+  postgres_data:

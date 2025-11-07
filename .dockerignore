@@ -1,0 +1,34 @@
+# Git
+.git
+.gitignore
+
+# Mix artifacts
+/_build
+/deps
+*.ez
+
+# Generated on crash by the VM
+erl_crash.dump
+
+# Static artifacts
+/assets/node_modules
+
+# Since we are building assets from assets/, we ignore priv/static.
+/priv/static/
+
+# Files matching config/*.secret.exs pattern contain sensitive
+# data and should not be committed into version control.
+/config/*.secret.exs
+
+# macOS
+.DS_Store
+
+# Editor files
+.elixir_ls
+.vscode
+.idea
+
+# Test artifacts
+/cover
+/doc
+
