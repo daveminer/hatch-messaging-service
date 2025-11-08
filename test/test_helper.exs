@@ -1,2 +1,2 @@
 ExUnit.start()
-Ecto.Adapters.SQL.Sandbox.mode(HatchMessagingService.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(MessagingService.Repo, :manual)

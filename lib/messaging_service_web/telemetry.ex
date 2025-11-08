@@ -1,4 +1,4 @@
-defmodule HatchMessagingServiceWeb.Telemetry do
+defmodule MessagingServiceWeb.Telemetry do
   use Supervisor
   import Telemetry.Metrics
 
@@ -53,23 +53,23 @@ defmodule HatchMessagingServiceWeb.Telemetry do
       ),
 
       # Database Metrics
-      summary("hatch_messaging_service.repo.query.total_time",
+      summary("messaging_service.repo.query.total_time",
         unit: {:native, :millisecond},
         description: "The sum of the other measurements"
       ),
-      summary("hatch_messaging_service.repo.query.decode_time",
+      summary("messaging_service.repo.query.decode_time",
         unit: {:native, :millisecond},
         description: "The time spent decoding the data received from the database"
       ),
-      summary("hatch_messaging_service.repo.query.query_time",
+      summary("messaging_service.repo.query.query_time",
         unit: {:native, :millisecond},
         description: "The time spent executing the query"
       ),
-      summary("hatch_messaging_service.repo.query.queue_time",
+      summary("messaging_service.repo.query.queue_time",
         unit: {:native, :millisecond},
         description: "The time spent waiting for a database connection"
       ),
-      summary("hatch_messaging_service.repo.query.idle_time",
+      summary("messaging_service.repo.query.idle_time",
         unit: {:native, :millisecond},
         description:
           "The time the connection spent waiting before being checked out for the query"
@@ -87,7 +87,7 @@ defmodule HatchMessagingServiceWeb.Telemetry do
     [
       # A module, function and arguments to be invoked periodically.
       # This function must call :telemetry.execute/3 and a metric must be added above.
-      # {HatchMessagingServiceWeb, :count_users, []}
+      # {MessagingServiceWeb, :count_users, []}
     ]
   end
 end

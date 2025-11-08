@@ -1,4 +1,4 @@
-defmodule HatchMessagingServiceWeb.CoreComponents do
+defmodule MessagingServiceWeb.CoreComponents do
   @moduledoc """
   Provides core UI components.
 
@@ -27,7 +27,7 @@ defmodule HatchMessagingServiceWeb.CoreComponents do
 
   """
   use Phoenix.Component
-  use Gettext, backend: HatchMessagingServiceWeb.Gettext
+  use Gettext, backend: MessagingServiceWeb.Gettext
 
   alias Phoenix.LiveView.JS
 
@@ -457,9 +457,9 @@ defmodule HatchMessagingServiceWeb.CoreComponents do
     # with our gettext backend as first argument. Translations are
     # available in the errors.po file (as we use the "errors" domain).
     if count = opts[:count] do
-      Gettext.dngettext(HatchMessagingServiceWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(MessagingServiceWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(HatchMessagingServiceWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(MessagingServiceWeb.Gettext, "errors", msg, opts)
     end
   end
 

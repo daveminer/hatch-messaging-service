@@ -1,5 +1,5 @@
-defmodule HatchMessagingServiceWeb.PageControllerTest do
-  use HatchMessagingServiceWeb.ConnCase
+defmodule MessagingServiceWeb.PageControllerTest do
+  use MessagingServiceWeb.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")

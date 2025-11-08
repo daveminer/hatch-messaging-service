@@ -1,6 +1,6 @@
-defmodule HatchMessagingService do
+defmodule MessagingService do
   @moduledoc """
-  HatchMessagingService keeps the contexts that define your domain
+  MessagingService keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless

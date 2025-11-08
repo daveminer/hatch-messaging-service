@@ -1,4 +1,4 @@
-defmodule HatchMessagingService.DataCase do
+defmodule MessagingService.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -10,7 +10,7 @@ defmodule HatchMessagingService.DataCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use HatchMessagingService.DataCase, async: true`, although
+  by setting `use MessagingService.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -18,17 +18,17 @@ defmodule HatchMessagingService.DataCase do
 
   using do
     quote do
-      alias HatchMessagingService.Repo
+      alias MessagingService.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import HatchMessagingService.DataCase
+      import MessagingService.DataCase
     end
   end
 
   setup tags do
-    HatchMessagingService.DataCase.setup_sandbox(tags)
+    MessagingService.DataCase.setup_sandbox(tags)
     :ok
   end
 
@@ -36,7 +36,7 @@ defmodule HatchMessagingService.DataCase do
   Sets up the sandbox based on the test tags.
   """
   def setup_sandbox(tags) do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(HatchMessagingService.Repo, shared: not tags[:async])
+    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(MessagingService.Repo, shared: not tags[:async])
     on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
   end
 

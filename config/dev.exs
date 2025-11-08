@@ -1,11 +1,11 @@
 import Config
 
 # Configure your database
-config :hatch_messaging_service, HatchMessagingService.Repo,
-  username: "postgres",
-  password: "postgres",
+config :messaging_service, MessagingService.Repo,
+  username: "messaging_user",
+  password: "messaging_password",
   hostname: "localhost",
-  database: "hatch_messaging_service_dev",
+  database: "messaging_service_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -16,7 +16,7 @@ config :hatch_messaging_service, HatchMessagingService.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :hatch_messaging_service, HatchMessagingServiceWeb.Endpoint,
+config :messaging_service, MessagingServiceWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: String.to_integer(System.get_env("PORT") || "4000")],
@@ -25,9 +25,8 @@ config :hatch_messaging_service, HatchMessagingServiceWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "GBdg1e4hK/IyO6iE2GNMWcnbG3qW/zFASF3vVhBJhQSezomWtuEVTLJvYNCRW7ri",
   watchers: [
-    esbuild:
-      {Esbuild, :install_and_run, [:hatch_messaging_service, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:hatch_messaging_service, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:messaging_service, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:messaging_service, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -54,18 +53,18 @@ config :hatch_messaging_service, HatchMessagingServiceWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :hatch_messaging_service, HatchMessagingServiceWeb.Endpoint,
+config :messaging_service, MessagingServiceWeb.Endpoint,
   live_reload: [
     web_console_logger: true,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/hatch_messaging_service_web/(?:controllers|live|components|router)/?.*\.(ex|heex)$"
+      ~r"lib/messaging_service_web/(?:controllers|live|components|router)/?.*\.(ex|heex)$"
     ]
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :hatch_messaging_service, dev_routes: true
+config :messaging_service, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :default_formatter, format: "[$level] $message\n"

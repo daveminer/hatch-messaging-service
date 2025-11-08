@@ -1,12 +1,12 @@
-defmodule HatchMessagingServiceWeb do
+defmodule MessagingServiceWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, components, channels, and so on.
 
   This can be used in your application as:
 
-      use HatchMessagingServiceWeb, :controller
-      use HatchMessagingServiceWeb, :html
+      use MessagingServiceWeb, :controller
+      use MessagingServiceWeb, :html
 
   The definitions below will be executed for every controller,
   component, etc, so keep them short and clean, focused
@@ -40,7 +40,7 @@ defmodule HatchMessagingServiceWeb do
     quote do
       use Phoenix.Controller, formats: [:html, :json]
 
-      use Gettext, backend: HatchMessagingServiceWeb.Gettext
+      use Gettext, backend: MessagingServiceWeb.Gettext
 
       import Plug.Conn
 
@@ -80,16 +80,16 @@ defmodule HatchMessagingServiceWeb do
   defp html_helpers do
     quote do
       # Translation
-      use Gettext, backend: HatchMessagingServiceWeb.Gettext
+      use Gettext, backend: MessagingServiceWeb.Gettext
 
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components
-      import HatchMessagingServiceWeb.CoreComponents
+      import MessagingServiceWeb.CoreComponents
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS
-      alias HatchMessagingServiceWeb.Layouts
+      alias MessagingServiceWeb.Layouts
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
@@ -99,9 +99,9 @@ defmodule HatchMessagingServiceWeb do
   def verified_routes do
     quote do
       use Phoenix.VerifiedRoutes,
-        endpoint: HatchMessagingServiceWeb.Endpoint,
-        router: HatchMessagingServiceWeb.Router,
-        statics: HatchMessagingServiceWeb.static_paths()
+        endpoint: MessagingServiceWeb.Endpoint,
+        router: MessagingServiceWeb.Router,
+        statics: MessagingServiceWeb.static_paths()
     end
   end
 

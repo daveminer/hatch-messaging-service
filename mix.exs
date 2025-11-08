@@ -1,9 +1,9 @@
-defmodule HatchMessagingService.MixProject do
+defmodule MessagingService.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :hatch_messaging_service,
+      app: :messaging_service,
       version: "0.1.0",
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -20,7 +20,7 @@ defmodule HatchMessagingService.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {HatchMessagingService.Application, []},
+      mod: {MessagingService.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -82,10 +82,14 @@ defmodule HatchMessagingService.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["compile", "tailwind hatch_messaging_service", "esbuild hatch_messaging_service"],
+      "assets.build": [
+        "compile",
+        "tailwind messaging_service",
+        "esbuild messaging_service"
+      ],
       "assets.deploy": [
-        "tailwind hatch_messaging_service --minify",
-        "esbuild hatch_messaging_service --minify",
+        "tailwind messaging_service --minify",
+        "esbuild messaging_service --minify",
         "phx.digest"
       ],
       precommit: ["compile --warning-as-errors", "deps.unlock --unused", "format", "test"]

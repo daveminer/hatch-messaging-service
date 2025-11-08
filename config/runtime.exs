@@ -12,23 +12,23 @@ import Config
 # If you use `mix release`, you need to explicitly enable the server
 # by passing the PHX_SERVER=true when you start it:
 #
-#     PHX_SERVER=true bin/hatch_messaging_service start
+#     PHX_SERVER=true bin/messaging_service start
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
 if System.get_env("PHX_SERVER") do
-  config :hatch_messaging_service, HatchMessagingServiceWeb.Endpoint, server: true
+  config :messaging_service, MessagingServiceWeb.Endpoint, server: true
 end
 
 # Configure database from DATABASE_URL in dev (for Docker) or prod
 if config_env() in [:dev, :test] do
   if database_url = System.get_env("DATABASE_URL") do
-    config :hatch_messaging_service, HatchMessagingService.Repo,
+    config :messaging_service, MessagingService.Repo,
       url: database_url,
       pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
     # When DATABASE_URL is set (Docker), bind to 0.0.0.0 to accept external connections
-    config :hatch_messaging_service, HatchMessagingServiceWeb.Endpoint,
+    config :messaging_service, MessagingServiceWeb.Endpoint,
       http: [ip: {0, 0, 0, 0}, port: String.to_integer(System.get_env("PORT") || "4000")]
   end
 end
@@ -43,7 +43,7 @@ if config_env() == :prod do
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
-  config :hatch_messaging_service, HatchMessagingService.Repo,
+  config :messaging_service, MessagingService.Repo,
     # ssl: true,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
@@ -66,9 +66,9 @@ if config_env() == :prod do
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
 
-  config :hatch_messaging_service, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
+  config :messaging_service, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
-  config :hatch_messaging_service, HatchMessagingServiceWeb.Endpoint,
+  config :messaging_service, MessagingServiceWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
       # Enable IPv6 and bind on all interfaces.
@@ -85,7 +85,7 @@ if config_env() == :prod do
   # To get SSL working, you will need to add the `https` key
   # to your endpoint configuration:
   #
-  #     config :hatch_messaging_service, HatchMessagingServiceWeb.Endpoint,
+  #     config :messaging_service, MessagingServiceWeb.Endpoint,
   #       https: [
   #         ...,
   #         port: 443,
@@ -107,7 +107,7 @@ if config_env() == :prod do
   # We also recommend setting `force_ssl` in your config/prod.exs,
   # ensuring no data is ever sent via http, always redirecting to https:
   #
-  #     config :hatch_messaging_service, HatchMessagingServiceWeb.Endpoint,
+  #     config :messaging_service, MessagingServiceWeb.Endpoint,
   #       force_ssl: [hsts: true]
   #
   # Check `Plug.SSL` for all available options in `force_ssl`.
@@ -117,7 +117,7 @@ if config_env() == :prod do
   # In production you need to configure the mailer to use a different adapter.
   # Here is an example configuration for Mailgun:
   #
-  #     config :hatch_messaging_service, HatchMessagingService.Mailer,
+  #     config :messaging_service, MessagingService.Mailer,
   #       adapter: Swoosh.Adapters.Mailgun,
   #       api_key: System.get_env("MAILGUN_API_KEY"),
   #       domain: System.get_env("MAILGUN_DOMAIN")
