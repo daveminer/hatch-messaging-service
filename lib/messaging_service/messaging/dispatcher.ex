@@ -11,8 +11,6 @@ defmodule MessagingService.Messaging.Dispatcher do
     "email" => Email
   }
 
-  # ---- Outbound -------------------------------------------------------------
-
   @spec send_message(Types.outbound_payload()) ::
           {:ok, Message.t()} | {:error, term()}
   def send_message(%{"type" => type} = payload) do
@@ -39,8 +37,6 @@ defmodule MessagingService.Messaging.Dispatcher do
     end
   end
 
-  # ---- Inbound (webhooks) ---------------------------------------------------
-
   @spec handle_inbound(atom(), map()) :: {:ok, Message.t()} | {:error, term()}
   def handle_inbound(provider_name, raw_payload) do
     with {:ok, module} <- provider_for_name(provider_name),
@@ -49,8 +45,6 @@ defmodule MessagingService.Messaging.Dispatcher do
       {:ok, nm}
     end
   end
-
-  # ---- Helpers --------------------------------------------------------------
 
   defp provider_for(type) do
     case Map.fetch(@provider_by_type, type) do
