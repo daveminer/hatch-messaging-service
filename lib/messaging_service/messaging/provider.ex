@@ -1,18 +1,10 @@
-defmodule Hatch.Messaging.Provider do
+defmodule MessagingService.Messaging.Provider do
   @moduledoc """
   Behaviour for all messaging providers (SMS/MMS and Email).
   """
 
-  @type msg_type :: :sms | :email
-
-  @type outbound_payload :: %{
-          required(:from) => String.t(),
-          required(:to) => String.t(),
-          required(:type) => msg_type(),
-          required(:body) => String.t(),
-          optional(:attachments) => [String.t()] | nil,
-          optional(:timestamp) => DateTime.t() | String.t() | nil
-        }
+  alias MessagingService.Messaging.Message
+  alias MessagingService.Messaging.Types
 
   @doc """
   The result of sending an outbound message to the provider.
@@ -26,11 +18,11 @@ defmodule Hatch.Messaging.Provider do
   @doc """
   Sends an outbound message to the provider.
   """
-  @callback send_outbound(outbound_payload()) :: send_result
+  @callback send_outbound(Types.outbound_payload()) :: send_result
 
   @doc """
   Normalizes an inbound webhook payload to our unified struct.
   """
   @callback handle_inbound(map()) ::
-              {:ok, NormalizedMessage.t()} | {:error, term()}
+              {:ok, Message.t()} | {:error, term()}
 end

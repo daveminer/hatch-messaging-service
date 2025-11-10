@@ -20,7 +20,7 @@ defmodule MessagingServiceWeb.Router do
     get "/", PageController, :home
   end
 
-  scope "/", MessagingServiceWeb do
+  scope "/api/", MessagingServiceWeb do
     pipe_through :api
 
     post "/send_message", MessageController, :send_message
