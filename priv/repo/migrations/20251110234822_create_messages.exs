@@ -3,6 +3,7 @@ defmodule MessagingService.Repo.Migrations.CreateMessages do
 
   def change do
     create table(:messages) do
+      add :id, :uuid, primary_key: true
       add :direction, :string, null: false
       add :type, :string, null: false
       add :from, :string, null: false
