@@ -9,9 +9,7 @@ defmodule MessagingService.Messaging.Provider do
   @doc """
   The result of sending an outbound message to the provider.
   """
-  @type send_result ::
-          {:ok, %{provider: atom(), messaging_provider_id: String.t(), status: :queued | :sent}}
-          | {:error, term()}
+  @type send_result :: {:ok, Message.t()} | {:error, term()}
 
   @callback name() :: atom()
 
@@ -23,6 +21,5 @@ defmodule MessagingService.Messaging.Provider do
   @doc """
   Normalizes an inbound webhook payload to our unified struct.
   """
-  @callback handle_inbound(map()) ::
-              {:ok, Message.t()} | {:error, term()}
+  @callback handle_inbound(map()) :: {:ok, Message.t()} | {:error, term()}
 end

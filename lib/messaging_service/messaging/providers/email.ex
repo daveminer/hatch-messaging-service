@@ -7,14 +7,26 @@ defmodule MessagingService.Messaging.Providers.Email do
   def name, do: :email
 
   @impl true
-  def send_outbound(%{type: :email}) do
-    case maybe_fail() do
+  def send_outbound(%{
+        "direction" => "outbound",
+        "from" => from,
+        "to" => to,
+        "type" => "email",
+        "body" => body,
+        "attachments" => attachments,
+        "timestamp" => timestamp
+      }) do
+    case mock_email_service_call(from, to, body, attachments) do
       :ok ->
         {:ok,
-         %{
-           provider: name(),
-           messaging_provider_id: "email-#{System.unique_integer([:positive])}",
-           status: :queued
+         %Message{
+           direction: "outbound",
+           type: "email",
+           from: from,
+           to: to,
+           body: body,
+           attachments: attachments,
+           timestamp: timestamp
          }}
 
       {:error, code} ->
@@ -22,39 +34,45 @@ defmodule MessagingService.Messaging.Providers.Email do
     end
   end
 
-  def send_outbound(%{type: other}), do: {:error, {:invalid_type, other}}
+  def send_outbound(%{"type" => other}), do: {:error, {:invalid_payload, other}}
 
   @impl true
   def handle_inbound(%{
         "from" => from,
         "to" => to,
-        "xillio_id" => mpid,
+        "xillio_id" => _mpid,
         "body" => body_html,
-        "attachments" => attachments,
         "timestamp" => ts
       }) do
     {:ok,
      %Message{
-       direction: :inbound,
-       type: :email,
+       direction: "inbound",
+       type: "email",
        from: from,
        to: to,
        body: body_html || "",
-       attachments: attachments || [],
-       timestamp: parse_ts(ts),
-       provider: name(),
-       provider_message_id: mpid,
-       metadata: %{}
+       attachments: [],
+       timestamp: ts
      }}
   rescue
     _ -> {:error, :invalid_payload}
   end
 
-  defp parse_ts(ts) when is_binary(ts), do: DateTime.from_iso8601(ts) |> elem(1)
-  defp parse_ts(%DateTime{} = dt), do: dt
-  defp parse_ts(_), do: DateTime.utc_now()
+  defp mock_email_service_call(from, to, body, attachments) do
+    _sendgrid_request_params = %{
+      personalizations: [
+        %{
+          to: [to]
+        }
+      ],
+      from: %{email: from},
+      subject: "Test Email",
+      content: [%{type: "text/html", value: body}],
+      attachments: attachments
+    }
 
-  defp maybe_fail do
+    # Here we would make a request to the Sendgrid API to send the email
+
     case :rand.uniform(10) do
       1 -> {:error, 429}
       2 -> {:error, 500}

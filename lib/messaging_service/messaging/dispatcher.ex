@@ -9,41 +9,30 @@ defmodule MessagingService.Messaging.Dispatcher do
 
   @provider_by_type %{
     "sms" => SMS,
+    "mms" => SMS,
     "email" => Email
   }
 
-  @spec send_message(Types.outbound_payload()) ::
-          {:ok, Message.t()} | {:error, term()}
-  def send_message(%{"body" => body, "from" => from, "to" => to, "type" => type} = payload) do
-    with {:ok, module} <- provider_for(type),
-         {:ok, %{messaging_provider_id: messaging_provider_id}} <- module.send_outbound(payload) do
-      nm =
-        %Message{
-          direction: :outbound,
-          type: type,
-          from: from,
-          to: to,
-          body: body,
-          attachments: payload["attachments"] || [],
-          timestamp: normalize_ts(payload["timestamp"]),
-          provider: module.name(),
-          provider_message_id: messaging_provider_id,
-          metadata: %{}
-        }
-
-      Repo.insert!(nm)
-
-      {:ok, nm}
+  @spec dispatch(Types.outbound_payload()) :: {:ok, Message.t()} | {:error, term()}
+  def dispatch(%{"direction" => direction, "type" => type} = payload) do
+    with {:ok, module} <- provider_for(type) do
+      case direction do
+        "outbound" -> handle_outbound(module, payload)
+        "inbound" -> handle_inbound(module, payload)
+        _ -> {:error, {:invalid_direction, direction}}
+      end
     end
   end
 
-  @spec handle_inbound(atom(), map()) :: {:ok, Message.t()} | {:error, term()}
-  def handle_inbound(provider_name, raw_payload) do
-    with {:ok, module} <- provider_for_name(provider_name),
-         {:ok, nm} <- module.handle_inbound(raw_payload) do
-      Repo.insert!(nm)
+  defp handle_outbound(module, payload) do
+    with {:ok, %Message{} = msg} <- module.send_outbound(payload) do
+      insert_message(msg)
+    end
+  end
 
-      {:ok, nm}
+  defp handle_inbound(module, payload) do
+    with {:ok, %Message{} = msg} <- module.handle_inbound(payload) do
+      insert_message(msg)
     end
   end
 
@@ -54,19 +43,9 @@ defmodule MessagingService.Messaging.Dispatcher do
     end
   end
 
-  defp provider_for_name(name) do
-    module =
-      case name do
-        :sms -> SMSMock
-        :email -> EmailMock
-        _ -> nil
-      end
-
-    if module, do: {:ok, module}, else: {:error, {:unknown_provider, name}}
+  defp insert_message(%Message{} = msg) do
+    msg
+    |> Repo.insert!()
+    |> then(&{:ok, &1})
   end
-
-  defp normalize_ts(nil), do: DateTime.utc_now()
-  defp normalize_ts(%DateTime{} = dt), do: dt
-  defp normalize_ts(ts) when is_binary(ts), do: DateTime.from_iso8601(ts) |> elem(1)
-  defp normalize_ts(_), do: DateTime.utc_now()
 end

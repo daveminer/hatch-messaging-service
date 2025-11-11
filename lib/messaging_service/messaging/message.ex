@@ -18,13 +18,9 @@ defmodule MessagingService.Messaging.Message do
     field :to, :string
     field :body, :string
     field :attachments, {:array, :string}
-    # DateTime.t()
+
     field :timestamp, :utc_datetime
-    # :sms | :email | :<your-provider>
-    field :provider, :string
-    field :provider_message_id, :string
-    # anything extra (e.g., headers)
-    field :metadata, :map, default: %{}
+    field :metadata, :map
 
     timestamps(type: :utc_datetime)
   end

@@ -7,15 +7,30 @@ defmodule MessagingService.Messaging.Providers.SMS do
   def name, do: :sms
 
   @impl true
-  def send_outbound(%{"type" => "sms"} = _payload) do
+  def send_outbound(
+        %{
+          "direction" => "outbound",
+          "from" => from,
+          "to" => to,
+          "type" => type,
+          "body" => body,
+          "attachments" => attachments,
+          "timestamp" => timestamp
+        } = _payload
+      )
+      when type in ["sms", "mms"] do
     # Simulate HTTP call and random transient failures per spec (429/500)
-    case maybe_fail() do
+    case mock_sms_service_call(from, to, body, attachments) do
       :ok ->
         {:ok,
-         %{
-           provider: name(),
-           messaging_provider_id: "sms-#{System.unique_integer([:positive])}",
-           status: :queued
+         %Message{
+           direction: "outbound",
+           type: "sms",
+           from: from,
+           to: to,
+           body: body,
+           attachments: attachments,
+           timestamp: timestamp
          }}
 
       {:error, code} ->
@@ -23,45 +38,45 @@ defmodule MessagingService.Messaging.Providers.SMS do
     end
   end
 
-  def send_outbound(%{type: other}), do: {:error, {:invalid_type, other}}
+  def send_outbound(%{type: other}), do: {:error, {:invalid_sms_outbound_payload, other}}
 
   @impl true
   def handle_inbound(%{
         "from" => from,
         "to" => to,
-        "type" => type_str,
+        "type" => type,
         "messaging_provider_id" => mpid,
         "body" => body,
         "attachments" => attachments,
         "timestamp" => ts
-      }) do
-    {:ok,
-     %Message{
-       direction: :inbound,
-       type: str_to_type(type_str),
-       from: from,
-       to: to,
-       body: body || "",
-       attachments: attachments || [],
-       timestamp: parse_ts(ts),
-       provider: name(),
-       provider_message_id: mpid,
-       metadata: %{}
-     }}
-  rescue
-    _ -> {:error, :invalid_payload}
+      })
+      when type in ["sms", "mms"] do
+    %Message{
+      direction: "inbound",
+      type: type,
+      from: from,
+      to: to,
+      body: body || "",
+      attachments: attachments || [],
+      timestamp: ts,
+      metadata: %{
+        messaging_provider_id: mpid
+      }
+    }
   end
 
-  defp str_to_type("sms"), do: :sms
-  defp str_to_type("mms"), do: :mms
-  defp str_to_type(_), do: :sms
+  def handle_inbound(%{type: other}), do: {:error, {:invalid_sms_webhook_payload, other}}
 
-  defp parse_ts(ts) when is_binary(ts), do: DateTime.from_iso8601(ts) |> elem(1)
-  defp parse_ts(%DateTime{} = dt), do: dt
-  defp parse_ts(_), do: DateTime.utc_now()
+  defp mock_sms_service_call(from, to, body, attachments) do
+    _twilio_request_params = %{
+      from: from,
+      to: to,
+      body: body,
+      attachments: attachments
+    }
 
-  # Randomly simulate 429/500 to exercise retry logic
-  defp maybe_fail do
+    # Here we would make a request to the Twilio API to send the SMS
+
     case :rand.uniform(10) do
       1 -> {:error, 429}
       2 -> {:error, 500}

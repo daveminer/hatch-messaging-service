@@ -23,7 +23,15 @@ defmodule MessagingServiceWeb.Router do
   scope "/api/", MessagingServiceWeb do
     pipe_through :api
 
-    post "/send_message", MessageController, :send_message
+    post "/send_email", MessageController, :send_email
+    post "/send_sms", MessageController, :send_sms
+  end
+
+  scope "/webhooks/", MessagingServiceWeb do
+    pipe_through :api
+
+    post "/sms", MessageController, :handle_inbound
+    post "/email", MessageController, :handle_inbound
   end
 
   # Other scopes may use custom stacks.
