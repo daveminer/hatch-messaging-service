@@ -12,17 +12,15 @@ chmod +x bin/*
 
 - Though functionality for retries is warranted, it is not implemented in this application. The endpoints for sending messages will return the result of the service call, rather than retry as might be done in production.
 
-- Logging and observability is partially implemented
+- Logging and observability is partially implemented.
 
 - The type system warns about unreachable code related to the mock providers. The mock providers always return `:ok`, but the code is built to handle errors nonetheless.
 
-- Attachments are assumed to be urls to an external system, rather than binaries to be stored in the application database
+- Attachments are assumed to be urls to an external system, rather than binaries to be stored in the application database.
 
-- No authentication or authorization is implemented
+- No authentication or authorization is implemented.
 
-- No considerations for PII have been made; it is exposed in various parts of the API
-
--
+- No considerations for PII have been made; it is exposed in various parts of the API.
 
 ## Running the Application
 
