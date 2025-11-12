@@ -10,7 +10,7 @@ defmodule MessagingServiceWeb.MessageJSON do
     }
   end
 
-  def bad_request() do
+  def bad_request(_assigns) do
     %{
       reason: "Bad request",
       errors: []

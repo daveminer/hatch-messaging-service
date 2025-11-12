@@ -28,6 +28,7 @@ defmodule MessagingServiceWeb.MessageController do
     with {:ok, validated_params} <- validate_sms_inbound_payload(params) do
       validated_params
       |> Map.put("direction", "inbound")
+      |> Map.put("type", "sms")
       |> dispatch_message()
       |> send_response(conn)
     else
@@ -59,7 +60,10 @@ defmodule MessagingServiceWeb.MessageController do
 
   def handle_inbound(conn, params) do
     Logger.warning("An invalid webhook payload was received: #{inspect(params |> Map.keys())}")
-    render(conn, :bad_request)
+
+    conn
+    |> put_status(400)
+    |> render(:bad_request)
   end
 
   @doc """
@@ -125,18 +129,24 @@ defmodule MessagingServiceWeb.MessageController do
   end
 
   defp send_missing_fields_bad_request(conn, params) do
-    render(conn, :bad_request,
+    conn
+    |> put_status(400)
+    |> render(:bad_request,
       missing_fields:
         @required_fields |> Enum.filter(fn field -> !Map.has_key?(params, field) end)
     )
   end
 
   defp send_response({:ok, message_id}, conn) do
-    send_resp(conn, 202, Jason.encode!(%{status: "sent", id: message_id}))
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(202, Jason.encode!(%{status: "sent", id: message_id}))
   end
 
   defp send_response({:error, reason}, conn) do
-    send_resp(conn, 422, Jason.encode!(%{error: inspect(reason)}))
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(422, Jason.encode!(%{error: inspect(reason)}))
   end
 
   defp validate_sms_inbound_payload(params) do

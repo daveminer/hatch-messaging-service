@@ -40,7 +40,7 @@ defmodule MessagingServiceWeb.ConversationController do
 
   defp parse_conversation_id(conversation_id) do
     case String.split(conversation_id, "::") do
-      [from, to] -> {:ok, {from, to}}
+      [from, to] when from != "" and to != "" -> {:ok, {from, to}}
       _ -> {:error, "Invalid conversation ID format. Use 'participant1::participant2'"}
     end
   end

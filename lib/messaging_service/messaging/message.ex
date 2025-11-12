@@ -9,6 +9,20 @@ defmodule MessagingService.Messaging.Message do
 
   @type t :: %__MODULE__{}
 
+  @derive {Jason.Encoder,
+           only: [
+             :id,
+             :direction,
+             :type,
+             :from,
+             :to,
+             :body,
+             :conversation_key,
+             :attachments,
+             :timestamp,
+             :metadata
+           ]}
+
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "messages" do
     # :inbound | :outbound

@@ -185,8 +185,8 @@ defmodule MessagingService.Messaging do
       group_by: m.conversation_key,
       select: %{
         conversation_key: m.conversation_key,
-        participant1: fragment("LEAST(MAX(?), MAX(?))", m.from, m.to),
-        participant2: fragment("GREATEST(MAX(?), MAX(?))", m.from, m.to),
+        participant1: fragment("SPLIT_PART(?, '::', 1)", m.conversation_key),
+        participant2: fragment("SPLIT_PART(?, '::', 2)", m.conversation_key),
         message_count: count(m.id),
         latest_message_at: max(m.timestamp),
         latest_message_body:
