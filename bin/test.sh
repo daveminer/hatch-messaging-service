@@ -3,7 +3,7 @@
 # Test script for messaging service endpoints
 # This script tests the local messaging service using the JSON examples from README.md
 
-BASE_URL="http://localhost:8080"
+BASE_URL="http://localhost:4000"
 CONTENT_TYPE="Content-Type: application/json"
 
 echo "=== Testing Messaging Service Endpoints ==="

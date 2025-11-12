@@ -38,7 +38,7 @@ defmodule MessagingService.Messaging.Providers.SMS do
     end
   end
 
-  def send_outbound(%{type: other}), do: {:error, {:invalid_sms_outbound_payload, other}}
+  def send_outbound(%{"type" => other}), do: {:error, {:invalid_sms_outbound_payload, other}}
 
   @impl true
   def handle_inbound(%{
@@ -66,7 +66,7 @@ defmodule MessagingService.Messaging.Providers.SMS do
      }}
   end
 
-  def handle_inbound(%{type: other}), do: {:error, {:invalid_sms_webhook_payload, other}}
+  def handle_inbound(_params), do: {:error, :invalid_sms_webhook_payload}
 
   defp mock_sms_service_call(from, to, body, attachments) do
     _twilio_request_params = %{
@@ -78,10 +78,6 @@ defmodule MessagingService.Messaging.Providers.SMS do
 
     # Here we would make a request to the Twilio API to send the SMS
 
-    case :rand.uniform(10) do
-      1 -> {:error, 429}
-      2 -> {:error, 500}
-      _ -> :ok
-    end
+    :ok
   end
 end

@@ -54,9 +54,9 @@ defmodule MessagingService.Messaging.Providers.Email do
        attachments: [],
        timestamp: ts
      }}
-  rescue
-    _ -> {:error, :invalid_payload}
   end
+
+  def handle_inbound(_params), do: {:error, :invalid_email_webhook_payload}
 
   defp mock_email_service_call(from, to, body, attachments) do
     _sendgrid_request_params = %{
@@ -73,10 +73,6 @@ defmodule MessagingService.Messaging.Providers.Email do
 
     # Here we would make a request to the Sendgrid API to send the email
 
-    case :rand.uniform(10) do
-      1 -> {:error, 429}
-      2 -> {:error, 500}
-      _ -> :ok
-    end
+    :ok
   end
 end
