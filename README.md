@@ -1,10 +1,62 @@
+# Project Notes
+
+Notes about the completed project are provided in this section. All commands are assumed to be run from the project root.
+
+The scripts in the /bin folder may require a change of permissions to work with the Makefile, i.e. from the root:
+
+```
+chmod +x bin/*
+```
+
+## Design considerations and limitations
+
+- Though functionality for retries is warranted, it is not implemented in this application. The endpoints for sending messages will return the result of the service call, rather than retry as might be done in production.
+
+- Logging and observability is partially implemented
+
+- The type system warns about unreachable code related to the mock providers. The mock providers always return `:ok`, but the code is built to handle errors nonetheless.
+
+- Attachments are assumed to be urls to an external system, rather than binaries to be stored in the application database
+
+- No authentication or authorization is implemented
+
+- No considerations for PII have been made; it is exposed in various parts of the API
+
+-
+
+## Running the Application
+
+1. Start the database:
+
+```
+make setup
+```
+
+2. Start the application
+
+```
+make run
+```
+
+3. In a separate terminal, run the test script:
+
+```
+make test
+```
+
+The test suite can also be run:
+
+```
+mix test
+```
+
 # Backend Interview Project
 
 This is a scaffold for Hatch's backend interview project. It includes basic setup for development, testing, and deployment.
 
 ## Guidelines
 
-At Hatch, we work with several message providers to offer a unified way for our Customers to  communicate to their Contacts. Today we offer SMS, MMS, email, voice calls, and voicemail drops. Your task is to implement an HTTP service that supports the core messaging functionality of Hatch, on a much smaller scale. Specific instructions and guidelines on completing the project are below.
+At Hatch, we work with several message providers to offer a unified way for our Customers to communicate to their Contacts. Today we offer SMS, MMS, email, voice calls, and voicemail drops. Your task is to implement an HTTP service that supports the core messaging functionality of Hatch, on a much smaller scale. Specific instructions and guidelines on completing the project are below.
 
 ### General Guidelines
 
@@ -56,13 +108,13 @@ The service should implement:
 
 ```json
 {
-    "from": "+18045551234",
-    "to": "+12016661234",
-    "type": "sms",
-    "messaging_provider_id": "message-1",
-    "body": "text message",
-    "attachments": null,
-    "timestamp": "2024-11-01T14:00:00Z" // UTC timestamp
+  "from": "+18045551234",
+  "to": "+12016661234",
+  "type": "sms",
+  "messaging_provider_id": "message-1",
+  "body": "text message",
+  "attachments": null,
+  "timestamp": "2024-11-01T14:00:00Z" // UTC timestamp
 }
 ```
 
@@ -138,6 +190,7 @@ This project structure is laid out for you already. You are welcome to move or c
 ## Database
 
 The application uses PostgreSQL as its database. The docker-compose.yml file sets up:
+
 - PostgreSQL 15 with Alpine Linux
 - Database: `messaging_service`
 - User: `messaging_user`
@@ -145,6 +198,7 @@ The application uses PostgreSQL as its database. The docker-compose.yml file set
 - Port: `5432` (exposed to host)
 
 To connect to the database directly:
+
 ```bash
 docker-compose exec postgres psql -U messaging_user -d messaging_service
 ```
