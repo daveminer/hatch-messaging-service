@@ -23,21 +23,21 @@ defmodule MessagingServiceWeb.Router do
   scope "/api/", MessagingServiceWeb do
     pipe_through :api
 
-    post "/send_email", MessageController, :send_email
-    post "/send_sms", MessageController, :send_sms
+    scope "/messages/" do
+      post "/email", MessageController, :send_email
+      post "/sms", MessageController, :send_sms
+    end
+
+    scope "/webhooks/" do
+      post "/email", MessageController, :handle_inbound
+      post "/sms", MessageController, :handle_inbound
+    end
+
+    scope "/conversations/" do
+      get "/", ConversationController, :index
+      get "/:id/messages", ConversationController, :show
+    end
   end
-
-  scope "/webhooks/", MessagingServiceWeb do
-    pipe_through :api
-
-    post "/sms", MessageController, :handle_inbound
-    post "/email", MessageController, :handle_inbound
-  end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", MessagingServiceWeb do
-  #   pipe_through :api
-  # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:messaging_service, :dev_routes) do

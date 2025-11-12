@@ -176,4 +176,27 @@ defmodule MessagingService.Messaging do
   def get_message_by_provider_id(provider_message_id) do
     Repo.get_by(Message, provider_message_id: provider_message_id)
   end
+
+  @doc """
+  Groups by the conversation_key and returns conversation metadata.
+  """
+  def list_conversations do
+    from(m in Message,
+      group_by: m.conversation_key,
+      select: %{
+        conversation_key: m.conversation_key,
+        participant1: fragment("LEAST(MAX(?), MAX(?))", m.from, m.to),
+        participant2: fragment("GREATEST(MAX(?), MAX(?))", m.from, m.to),
+        message_count: count(m.id),
+        latest_message_at: max(m.timestamp),
+        latest_message_body:
+          fragment(
+            "(SELECT body FROM messages m2 WHERE m2.conversation_key = ? ORDER BY m2.timestamp DESC LIMIT 1)",
+            m.conversation_key
+          )
+      },
+      order_by: [desc: max(m.timestamp)]
+    )
+    |> Repo.all()
+  end
 end

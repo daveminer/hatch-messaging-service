@@ -10,4 +10,6 @@ echo "Environment: ${ENV:-development}"
 # Run the docker compose file
 docker-compose build --no-cache && docker-compose up -d
 
+mix phx.server
+
 echo "Application started successfully!" 

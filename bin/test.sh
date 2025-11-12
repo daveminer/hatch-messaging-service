@@ -103,8 +103,8 @@ curl -X GET "$BASE_URL/api/conversations" \
 
 # Test 8: Get messages for a conversation (example conversation ID)
 echo "8. Testing get messages for conversation..."
-curl -X GET "$BASE_URL/api/conversations/1/messages" \
+curl -X GET "$BASE_URL/api/conversations/%2B12016661234%3A%3A%2B18045551234/messages" \
   -H "$CONTENT_TYPE" \
   -w "\nStatus: %{http_code}\n\n"
 
-echo "=== Test script completed ===" 
+echo "=== Test script completed ==="

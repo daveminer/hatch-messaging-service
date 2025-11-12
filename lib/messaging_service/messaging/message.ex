@@ -18,6 +18,7 @@ defmodule MessagingService.Messaging.Message do
     field :from, :string
     field :to, :string
     field :body, :string
+    field :conversation_key, :string
     field :attachments, {:array, :string}
 
     field :timestamp, :utc_datetime
