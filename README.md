@@ -24,10 +24,19 @@ chmod +x bin/*
 
 ## Running the Application
 
-1. Start the database:
+1. Start the database server:
 
 ```
 make setup
+```
+
+2. Create the database schema:
+
+**Note**: `mix` is required for this step, and can be installed with elixir: `brew install elixir`
+
+```
+mix ecto.create
+mix ecto.migrate
 ```
 
 2. Start the application
