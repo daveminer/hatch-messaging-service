@@ -31,6 +31,10 @@ config :messaging_service, MessagingServiceWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :messaging_service, MessagingService.Mailer, adapter: Swoosh.Adapters.Local
 
+config :messaging_service, MessagingService.Repo,
+  migration_primary_key: [type: :binary_id],
+  migration_foreign_key: [type: :binary_id]
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.25.4",

@@ -21,5 +21,5 @@ defmodule MessagingService.Messaging.Provider do
   @doc """
   Normalizes an inbound webhook payload to our unified struct.
   """
-  @callback handle_inbound(map()) :: {:ok, Message.t()} | {:error, term()}
+  @callback handle_inbound(map()) :: send_result
 end

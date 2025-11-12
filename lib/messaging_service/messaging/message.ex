@@ -9,6 +9,7 @@ defmodule MessagingService.Messaging.Message do
 
   @type t :: %__MODULE__{}
 
+  @primary_key {:id, :binary_id, autogenerate: true}
   schema "messages" do
     # :inbound | :outbound
     field :direction, :string
@@ -38,8 +39,6 @@ defmodule MessagingService.Messaging.Message do
       :body,
       :attachments,
       :timestamp,
-      :provider,
-      :provider_message_id,
       :metadata
     ])
     |> validate_required([
@@ -48,18 +47,9 @@ defmodule MessagingService.Messaging.Message do
       :from,
       :to,
       :body,
-      :timestamp,
-      :provider,
-      :provider_message_id
+      :timestamp
     ])
     |> validate_inclusion(:direction, ["inbound", "outbound"])
-    |> validate_inclusion(:type, ["sms", "email"])
+    |> validate_inclusion(:type, ["sms", "email", "mms"])
   end
-
-  @doc """
-  Generate a direction-agnostic conversation key from the message's from/to fields.
-  """
-  # def conversation_key(%__MODULE__{from: from, to: to}) do
-  #   [from, to] |> Enum.sort() |> Enum.join(":")
-  # end
 end

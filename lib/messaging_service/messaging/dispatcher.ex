@@ -26,13 +26,13 @@ defmodule MessagingService.Messaging.Dispatcher do
 
   defp handle_outbound(module, payload) do
     with {:ok, %Message{} = msg} <- module.send_outbound(payload) do
-      insert_message(msg)
+      Repo.insert(msg)
     end
   end
 
   defp handle_inbound(module, payload) do
     with {:ok, %Message{} = msg} <- module.handle_inbound(payload) do
-      insert_message(msg)
+      Repo.insert(msg)
     end
   end
 
@@ -41,11 +41,5 @@ defmodule MessagingService.Messaging.Dispatcher do
       {:ok, module} -> {:ok, module}
       :error -> {:error, {:unknown_provider_type, type}}
     end
-  end
-
-  defp insert_message(%Message{} = msg) do
-    msg
-    |> Repo.insert!()
-    |> then(&{:ok, &1})
   end
 end

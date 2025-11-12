@@ -51,18 +51,19 @@ defmodule MessagingService.Messaging.Providers.SMS do
         "timestamp" => ts
       })
       when type in ["sms", "mms"] do
-    %Message{
-      direction: "inbound",
-      type: type,
-      from: from,
-      to: to,
-      body: body || "",
-      attachments: attachments || [],
-      timestamp: ts,
-      metadata: %{
-        messaging_provider_id: mpid
-      }
-    }
+    {:ok,
+     %Message{
+       direction: "inbound",
+       type: type,
+       from: from,
+       to: to,
+       body: body || "",
+       attachments: attachments || [],
+       timestamp: ts,
+       metadata: %{
+         messaging_provider_id: mpid
+       }
+     }}
   end
 
   def handle_inbound(%{type: other}), do: {:error, {:invalid_sms_webhook_payload, other}}

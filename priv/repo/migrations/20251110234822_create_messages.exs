@@ -3,7 +3,6 @@ defmodule MessagingService.Repo.Migrations.CreateMessages do
 
   def change do
     create table(:messages) do
-      add :id, :uuid, primary_key: true
       add :direction, :string, null: false
       add :type, :string, null: false
       add :from, :string, null: false
@@ -11,19 +10,22 @@ defmodule MessagingService.Repo.Migrations.CreateMessages do
       add :body, :text, null: false
       add :attachments, {:array, :string}
       add :timestamp, :utc_datetime, null: false
-      add :provider, :string, null: false
-      add :provider_message_id, :string, null: false
       add :metadata, :map, default: "{}"
 
       timestamps(type: :utc_datetime)
     end
 
-    execute("""
-    ALTER TABLE messages
-    ADD COLUMN conversation_key TEXT GENERATED ALWAYS AS (
-      LEAST("from","to") || '::' || GREATEST("from","to")
-    ) STORED;
-    """)
+    execute(
+      """
+      ALTER TABLE messages
+      ADD COLUMN conversation_key TEXT GENERATED ALWAYS AS (
+        LEAST("from","to") || '::' || GREATEST("from","to")
+      ) STORED
+      """,
+      """
+      ALTER TABLE messages DROP COLUMN conversation_key
+      """
+    )
 
     create index(:messages, [:from, :to])
     create index(:messages, [:to])
