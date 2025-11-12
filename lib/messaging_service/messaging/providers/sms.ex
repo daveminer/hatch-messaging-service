@@ -19,7 +19,6 @@ defmodule MessagingService.Messaging.Providers.SMS do
         } = _payload
       )
       when type in ["sms", "mms"] do
-    # Simulate HTTP call and random transient failures per spec (429/500)
     case mock_sms_service_call(from, to, body, attachments) do
       :ok ->
         {:ok,

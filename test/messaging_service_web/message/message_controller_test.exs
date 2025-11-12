@@ -1,6 +1,8 @@
 defmodule MessagingServiceWeb.MessageControllerTest do
   use MessagingServiceWeb.ConnCase, async: true
 
+  import ExUnit.CaptureLog
+
   alias MessagingService.Messaging.Message
   alias MessagingService.Repo
 
@@ -105,8 +107,14 @@ defmodule MessagingServiceWeb.MessageControllerTest do
     end
 
     test "handles invalid webhook payload gracefully", %{conn: conn} do
-      conn = post(conn, ~p"/api/webhooks/sms", %{"invalid" => "payload"})
-      assert conn.status in [400, 422]
+      log =
+        capture_log(fn ->
+          result_conn = post(conn, ~p"/api/webhooks/sms", %{"invalid" => "payload"})
+          assert result_conn.status in [400, 422]
+        end)
+
+      assert log =~ "An invalid webhook payload was received"
+      assert log =~ "[\"invalid\"]"
     end
   end
 
